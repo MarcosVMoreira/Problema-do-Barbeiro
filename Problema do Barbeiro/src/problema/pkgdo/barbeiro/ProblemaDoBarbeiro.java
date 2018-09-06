@@ -23,7 +23,6 @@ public class ProblemaDoBarbeiro extends Observable {
     public ProblemaDoBarbeiro() {
         cadeirasOcupadas = 0;
         lock = new Object();
-
     }
 
     public static ProblemaDoBarbeiro getInstance() {
@@ -37,7 +36,7 @@ public class ProblemaDoBarbeiro extends Observable {
             cadeirasOcupadas++;
             setChanged();
             notifyObservers();
-//            Thread.sleep(500);
+            Thread.sleep(500);
         } catch (InterruptedException ex) {
             System.out.println("Erro ao sentar na cadeira do barbeiro.");
         }
@@ -49,7 +48,7 @@ public class ProblemaDoBarbeiro extends Observable {
             cortar();
             setChanged();
             notifyObservers();
-//            Thread.sleep(500);
+            Thread.sleep(500);
         } finally {
             cadeiraBarbeiroOcupada = false;
             System.out.println("Cadeira do barbeiro liberada");
@@ -64,7 +63,7 @@ public class ProblemaDoBarbeiro extends Observable {
             Thread.sleep(500);
             setChanged();
             notifyObservers();
-//            Thread.sleep(500);
+            Thread.sleep(500);
         } catch (InterruptedException ex) {
             System.out.println("Não foi possível fazer a thread dormir.");
         }

@@ -37,7 +37,7 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
         cadeira4.setBackground(Color.green);
         cadeira5.setBackground(Color.green);
 
-        p1 = new ProblemaDoBarbeiro();
+        p1 = ProblemaDoBarbeiro.getInstance();
 
         registerObserver(p1);
     }
@@ -143,7 +143,6 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
         ExecutorService executor = Executors.newFixedThreadPool(5);
 
         for (int i = 0; i < 200 && controle; i++) {
-
             executor.execute(() -> {
                 try {
                     ProblemaDoBarbeiro.getInstance().connect();
@@ -214,18 +213,14 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("entrei");
         Thread GUIThread = new Thread(() -> {
             synchronized (this) {
-                System.out.println("teste");
                 int cadeiras;
                 boolean barbeiro;
                 if (o instanceof ProblemaDoBarbeiro) {
                     ProblemaDoBarbeiro p = (ProblemaDoBarbeiro) o;
                     cadeiras = p.getCadeirasOcupadas();
                     barbeiro = p.isCadeiraBarbeiroOcupada();
-
-                    System.out.println("Cadeira: " + cadeiras + " Barbeiro: " + barbeiro);
 
                     if (barbeiro) {
                         cadeiraBarbeiro.setBackground(Color.red);
