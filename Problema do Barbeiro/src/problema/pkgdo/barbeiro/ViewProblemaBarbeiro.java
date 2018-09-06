@@ -10,11 +10,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,14 +22,29 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
     /**
      * Creates new form InterfaceGrafica
      */
+    boolean controle = true;
+
+    private Observable processor;
+    ProblemaDoBarbeiro p1;
+
     public ViewProblemaBarbeiro() {
         initComponents();
+
         cadeiraBarbeiro.setBackground(Color.green);
         cadeira1.setBackground(Color.green);
         cadeira2.setBackground(Color.green);
         cadeira3.setBackground(Color.green);
         cadeira4.setBackground(Color.green);
         cadeira5.setBackground(Color.green);
+
+        p1 = new ProblemaDoBarbeiro();
+
+        registerObserver(p1);
+    }
+
+    public void registerObserver(Observable barbeiro) {
+        this.processor = barbeiro;
+        barbeiro.addObserver(this);
     }
 
     /**
@@ -69,6 +81,11 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
         });
 
         Stop.setText("Parar");
+        Stop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StopActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -123,17 +140,28 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
     }// </editor-fold>//GEN-END:initComponents
 
     private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
-        ExecutorService executor = Executors.newCachedThreadPool();
-           /*
-           for(int i=0; i<200;i++){
-               executor.submit(() -> {
-                   Connection.getInstance().connect();
-               });
-           }
-         
-           executor.shutdown();
-           executor.awaitTermination(1, TimeUnit.DAYS);*/
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+
+        for (int i = 0; i < 200 && controle; i++) {
+
+            executor.execute(() -> {
+                try {
+                    ProblemaDoBarbeiro.getInstance().connect();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ViewProblemaBarbeiro.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+        }
+
+        executor.shutdown();
+
     }//GEN-LAST:event_StartActionPerformed
+
+    private void StopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopActionPerformed
+        // TODO add your handling code here:
+        controle = false;
+
+    }//GEN-LAST:event_StopActionPerformed
 
     /**
      * @param args the command line arguments
@@ -183,10 +211,61 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
-    
-    
+
     @Override
     public void update(Observable o, Object arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("entrei");
+        Thread GUIThread = new Thread(() -> {
+            synchronized (this) {
+                System.out.println("teste");
+                int cadeiras;
+                boolean barbeiro;
+                if (o instanceof ProblemaDoBarbeiro) {
+                    ProblemaDoBarbeiro p = (ProblemaDoBarbeiro) o;
+                    cadeiras = p.getCadeirasOcupadas();
+                    barbeiro = p.isCadeiraBarbeiroOcupada();
+
+                    System.out.println("Cadeira: " + cadeiras + " Barbeiro: " + barbeiro);
+
+                    if (barbeiro) {
+                        cadeiraBarbeiro.setBackground(Color.red);
+                    } else {
+                        cadeiraBarbeiro.setBackground(Color.green);
+                    }
+
+                    if (cadeiras > 0) {
+                        cadeira1.setBackground(Color.red);
+                    } else {
+                        cadeira1.setBackground(Color.green);
+                    }
+
+                    if (cadeiras > 1) {
+                        cadeira2.setBackground(Color.red);
+                    } else {
+                        cadeira2.setBackground(Color.green);
+                    }
+
+                    if (cadeiras > 2) {
+                        cadeira3.setBackground(Color.red);
+                    } else {
+                        cadeira3.setBackground(Color.green);
+                    }
+
+                    if (cadeiras > 3) {
+                        cadeira4.setBackground(Color.red);
+                    } else {
+                        cadeira4.setBackground(Color.green);
+                    }
+
+                    if (cadeiras > 4) {
+                        cadeira5.setBackground(Color.red);
+                    } else {
+                        cadeira5.setBackground(Color.green);
+                    }
+
+                }
+            }
+        });
+        GUIThread.start();
     }
 }

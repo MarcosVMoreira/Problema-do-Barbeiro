@@ -6,53 +6,83 @@
 package problema.pkgdo.barbeiro;
 
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
+import java.util.Observable;
 
 /**
  *
  * @author root
  */
-public class ProblemaDoBarbeiro implements Observable {
+public class ProblemaDoBarbeiro extends Observable {
 
     private static Semaphore cadeiraBarbearia = new Semaphore(5, true);
-    private final Object lock = new Object();
+    private Object lock = new Object();
+    private static final ProblemaDoBarbeiro instance = new ProblemaDoBarbeiro();
+    private int cadeirasOcupadas;
+    private boolean cadeiraBarbeiroOcupada = false;
 
-    public void connect() {
+    public ProblemaDoBarbeiro() {
+        cadeirasOcupadas = 0;
+        lock = new Object();
+
+    }
+
+    public static ProblemaDoBarbeiro getInstance() {
+        return instance;
+    }
+
+    public void connect() throws InterruptedException {
         try {
+            System.out.println("Cadeira de espera ocupada");
             cadeiraBarbearia.acquire();
+            cadeirasOcupadas++;
+            setChanged();
+            notifyObservers();
+//            Thread.sleep(500);
         } catch (InterruptedException ex) {
             System.out.println("Erro ao sentar na cadeira do barbeiro.");
         }
 
         try {
-            cortar();
-        } finally {
+            System.out.println("Cadeira de espera liberada.");
             cadeiraBarbearia.release();
+            cadeirasOcupadas--;
+            cortar();
+            setChanged();
+            notifyObservers();
+//            Thread.sleep(500);
+        } finally {
+            cadeiraBarbeiroOcupada = false;
+            System.out.println("Cadeira do barbeiro liberada");
         }
     }
 
     private synchronized void cortar() {
 
         try {
+            System.out.println("Cortando cabelo");
+            cadeiraBarbeiroOcupada = true;
             Thread.sleep(500);
+            setChanged();
+            notifyObservers();
+//            Thread.sleep(500);
         } catch (InterruptedException ex) {
             System.out.println("Não foi possível fazer a thread dormir.");
         }
-        lock.notify();
 
     }
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * @return the cadeirasOcupadas
+     */
+    public int getCadeirasOcupadas() {
+        return cadeirasOcupadas;
     }
 
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * @return the cadeiraBarbeiroOcupada
+     */
+    public boolean isCadeiraBarbeiroOcupada() {
+        return cadeiraBarbeiroOcupada;
     }
 
 }
