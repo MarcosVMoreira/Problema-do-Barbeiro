@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 /**
  *
@@ -140,6 +141,8 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
     }// </editor-fold>//GEN-END:initComponents
 
     private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
+        p1.setExecuta(true);
+
         ExecutorService executor = Executors.newFixedThreadPool(5);
 
         for (int i = 0; i < 200 && controle; i++) {
@@ -158,7 +161,7 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
 
     private void StopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopActionPerformed
         // TODO add your handling code here:
-        controle = false;
+        p1.setExecuta(false);
 
     }//GEN-LAST:event_StopActionPerformed
 

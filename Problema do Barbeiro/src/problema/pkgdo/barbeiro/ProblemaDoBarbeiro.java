@@ -7,6 +7,7 @@ package problema.pkgdo.barbeiro;
 
 import java.util.concurrent.Semaphore;
 import java.util.Observable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -19,10 +20,12 @@ public class ProblemaDoBarbeiro extends Observable {
     private static final ProblemaDoBarbeiro instance = new ProblemaDoBarbeiro();
     private int cadeirasOcupadas;
     private boolean cadeiraBarbeiroOcupada = false;
+    private AtomicBoolean executa;
 
     public ProblemaDoBarbeiro() {
         cadeirasOcupadas = 0;
         lock = new Object();
+        executa = new AtomicBoolean(true);
     }
 
     public static ProblemaDoBarbeiro getInstance() {
@@ -30,28 +33,30 @@ public class ProblemaDoBarbeiro extends Observable {
     }
 
     public void connect() throws InterruptedException {
-        try {
-            System.out.println("Cadeira de espera ocupada");
-            cadeiraBarbearia.acquire();
-            cadeirasOcupadas++;
-            setChanged();
-            notifyObservers();
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            System.out.println("Erro ao sentar na cadeira do barbeiro.");
-        }
+        while (executa.get()) {
+            try {
+                System.out.println("Cadeira de espera ocupada");
+                cadeiraBarbearia.acquire();
+                cadeirasOcupadas++;
+                setChanged();
+                notifyObservers();
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                System.out.println("Erro ao sentar na cadeira do barbeiro.");
+            }
 
-        try {
-            System.out.println("Cadeira de espera liberada.");
-            cadeiraBarbearia.release();
-            cadeirasOcupadas--;
-            cortar();
-            setChanged();
-            notifyObservers();
-            Thread.sleep(500);
-        } finally {
-            cadeiraBarbeiroOcupada = false;
-            System.out.println("Cadeira do barbeiro liberada");
+            try {
+                System.out.println("Cadeira de espera liberada.");
+                cadeiraBarbearia.release();
+                cadeirasOcupadas--;
+                cortar();
+                setChanged();
+                notifyObservers();
+                Thread.sleep(500);
+            } finally {
+                cadeiraBarbeiroOcupada = false;
+                System.out.println("Cadeira do barbeiro liberada");
+            }
         }
     }
 
@@ -82,6 +87,13 @@ public class ProblemaDoBarbeiro extends Observable {
      */
     public boolean isCadeiraBarbeiroOcupada() {
         return cadeiraBarbeiroOcupada;
+    }
+
+    /**
+     * @param executa the executa to set
+     */
+    public void setExecuta(boolean executa) {
+        this.executa.set(executa);
     }
 
 }
