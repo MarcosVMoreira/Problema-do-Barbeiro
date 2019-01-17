@@ -1,4 +1,4 @@
-# Trabalho de Engenharia de Software
+# Problema do Barbeiro Dorminhoco
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Estudo dirigido feito em `Java` para a disciplina de **Sistemas Operacionais II** do curso de [Engenharia de Computação](https://pcs.ifsuldeminas.edu.br/index.php?option=com_content&view=article&id=639&Itemid=267) do [IFSULDEMINAS - Campus Poços de Caldas](https://pcs.ifsuldeminas.edu.br/). <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dentre diversas soluções que podem ser implementadas para esse problema, nesse repositório será apresentada a solução utilizando o conceito de *threads*.<br>
