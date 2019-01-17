@@ -69,6 +69,7 @@ public class ViewProblemaBarbeiro extends javax.swing.JFrame implements Observer
         Stop = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Problema do barbeiro");
 
         jLabel1.setText("Cadeira do barbeiro:");
 
